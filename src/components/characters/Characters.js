@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Spinner from "../Spinner";
 import "./Characters.css";
+import {useSelector, useDispatch} from 'react-redux';
+import {getCharacters} from '../../redux/actions.jsx';
+import CharacterDetail from '../characterDetails/CharacterDetail.js';
 
-function Characters() {
+function Characters(props) {
   /*
     PISTA:
     La dirección de donde vamos a tomar los datos es
@@ -15,6 +18,11 @@ function Characters() {
     En caso de no poner nada en la query, la api traerá a todos los personajes.
   */
 
+  const dispatch = useDispatch();
+  useEffect( () => {dispatch(getCharacters())}, [] );
+  let personajes = useSelector(state => state.personajes)
+
+
   return (
     <div className="Characters">
       <h1>List of Characters</h1>
@@ -25,14 +33,13 @@ function Characters() {
       */}
 
       <ul className="Characters__list">
-        {/*El loading le va a dar un efecto de carga hasta que la peticion de la API llegue, no tocar!.*/}
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          {
-            /*Aquí vamos a mostrar la lista de personajes.*/
-          }
-        )}
+        {personajes?.map(p =>
+          <li key={p.char_id}>
+            <Link to={ `/characters/${p.char_id}` } >
+              {p.name}
+            </Link>
+          </li>     
+          )}
       </ul>
     </div>
   );
